@@ -1,13 +1,7 @@
-from DSA import Comparator, Heap
+from InputSheet import INPUTS
 
+input_0 = INPUTS[0]
 
-class IntCmp(Comparator):
-    def compare(self, a, b):
-        return -a + b
+output_0 = input_0.A_Star()
 
-
-int_h = Heap(IntCmp())
-
-
-while not int_h.emp():
-    print(int_h.pop())
+print(output_0.__len__())

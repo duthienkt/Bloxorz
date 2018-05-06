@@ -85,6 +85,7 @@ class BTree:
         self.left = None
         self.right = None
         self.val = _val
+        self.count = 1
 
     def find(self, _val):
         """
@@ -107,19 +108,20 @@ class BTree:
         :param _tree: BTree
         :return: self
         """
+        self.count = 1
         if _tree.val < self.val:
             if self.left is None:
                 self.left = _tree
-                self.count += 1
             else:
                 self.left.add(_tree)
+            self.count += self.left.count
         else:
             if _tree.val > self.val:
                 if self.right is None:
                     self.right = _tree
-                    self.count += 1
                 else:
                     self.right.add(_tree)
+            self.count += self.right.count
         return self
 
     def __str__(self):
@@ -159,12 +161,14 @@ class Searcher:
         :param map_tree: BTree => List of visited state
         :return: AState => destination
         """
+
         if map_tree.find(state.to_int()) is not None:
             return None
+
         if state.is_destination():
             return state
         map_tree.add(BTree(state.to_int()))
-        e = state.next_states()
+        e = state.next_states(HeuristicCmp())
         while not e.emp():
             choice = e.pop()
             res = Searcher.DFS(choice, map_tree)
@@ -182,7 +186,7 @@ class Searcher:
             left += 1
             if p.is_destination():
                 return p
-            t = p.next_state(HeuristicCmp())
+            t = p.next_states(HeuristicCmp())
             while not t.emp():
                 e = t.pop()
                 if map_tree.find(e.to_int()) is None:
@@ -199,7 +203,7 @@ class Searcher:
             p = priority_queue.pop()
             if p.is_destination():
                 return p
-            t = p.next_state(HeuristicCmp())
+            t = p.next_states(HeuristicCmp())
             while not t.emp():
                 e = t.pop()
                 if map_tree.find(e.to_int()) is None:
